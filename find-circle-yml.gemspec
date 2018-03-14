@@ -2,7 +2,7 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'circleci/audit/version'
+require 'find_circle_yml/version'
 
 Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler'
@@ -13,14 +13,14 @@ Gem::Specification.new do |spec|
   spec.bindir = 'exe'
   spec.description = ''
   spec.email = ['sayhi@circleci.com']
-  spec.executables = ['circleci-audit']
+  spec.executables = ['find-circle-yml']
   spec.files = Dir.glob('lib/**/*.rb') + %w[README.md]
-  spec.homepage = 'https://github.com/nwjsmith/thumbtack'
+  spec.homepage = 'https://github.com/circleci/find-circle-yml'
   spec.license = 'MIT'
-  spec.name = 'circleci-audit'
+  spec.name = 'find-circle-yml'
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.4.0'
   spec.summary = ''
   spec.test_files = Dir.glob('test/**/*.rb')
-  spec.version = CircleCI::Audit::VERSION
+  spec.version = FindCircleYml::VERSION
 end

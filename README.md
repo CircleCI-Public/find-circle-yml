@@ -1,22 +1,22 @@
-# circleci-audit
+# find-circle-yml
 
 A command-line tool for finding which repositories in your GitHub organization or Bitbucket team have `circle.yml` configuration files.
 
 ## Installation
 
-    $ gem install circleci-audit
+    $ gem install find-circle-yml
 
 ## Usage
 
 **GitHub**
 
-    $ GITHUB_ORGANIZATION=<your github org> GITHUB_USER=<your github user> GITHUB_ACCESS_TOKEN=<your personal access token> circleci-audit
+    $ GITHUB_ORGANIZATION=<your github org> GITHUB_USER=<your github user> GITHUB_ACCESS_TOKEN=<your personal access token> find-circle-yml
     https://github.com/your-org/your-repo/blob/master/circle.yml
     https://github.com/your-org/another-repo/blob/master/circle.yml
 
 **Bitbucket**
 
-    $ BITBUCKET_TEAM=<your bitbucket team> BITBUCKET_USER=<your bitbucket user> BITBUCKET_APP_PASSWORD=<your bitbucket password> circleci-audit
+    $ BITBUCKET_TEAM=<your bitbucket team> BITBUCKET_USER=<your bitbucket user> BITBUCKET_APP_PASSWORD=<your bitbucket password> find-circle-yml
     https://bitbucket.org/your-team/your-repo/src/bb030e9dcee6218d0ce521b7312e60e5cc5db4a3/circle.yml
     https://bitbucket.org/your-team/another-repo/src/cf9f1078be258dd902ff49718e5ee5422e2dd08f/circle.yml
 
@@ -42,7 +42,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/circleci/circleci-audit. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/circleci/find-circle-yml. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
@@ -50,4 +50,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the circleci-audit project is expected to follow the [code of conduct](https://github.com/circleci/circleci-audit/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the circleci-audit project is expected to follow the [code of conduct](https://github.com/circleci/find-circle-yml/blob/master/CODE_OF_CONDUCT.md).

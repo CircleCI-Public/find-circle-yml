@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'circleci/audit'
+require 'find_circle_yml'
 
 require 'irb'
 IRB.start(__FILE__)

@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'find_circle_yml'
+
+provided_configurations = [
+  FindCircleYml::Bitbucket::Configuration.new(ENV),
+  FindCircleYml::GitHub::Configuration.new(ENV)
+].select(&:provided?)
+
+if provided_configurations.empty?
+  STDERR.puts 'Provide a Bitbucket or GitHub configuration'
+  exit 1
+end
+
+provided_configurations.each do |configuration|
+  if configuration.valid?
+    service = configuration.service
+    service.repositories.each do |repository|
+      if (configuration_file = service.configuration_file(repository))
+        puts configuration_file.url
+      end
+    end
+  else
+    STDERR.puts configuration.error_message
+    exit 1
+  end
+end
