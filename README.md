@@ -28,11 +28,11 @@ Authorization requires creating an app-specific password for your platform:
 
 **GitHub**
 
-See [the docs for creating a personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/). Use the token as the value of `GITHUB_ACCESS_TOKEN` environment variable.
+See [the docs for creating a personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/). Ensure that the token has the **repo** and **read:org** scope.  Use the token as the value of `GITHUB_ACCESS_TOKEN` environment variable.
 
 **Bitbucket**
 
-See [the docs for creating an app password](https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html). Use the app password as the value of `BITBUCKET_APP_PASSWORD` environment variable.
+See [the docs for creating an app password](https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html). Ensure that the app password has the **Team membership Read** and **Repositories Read** permissions. Use the app password as the value of `BITBUCKET_APP_PASSWORD` environment variable.
 
 ## Development
 
