@@ -50,4 +50,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the circleci-audit project is expected to follow the [code of conduct](https://github.com/circleci/find-circle-yml/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the circleci-audit project is expected to follow the [code of conduct](https://github.com/CircleCI-Public/find-circle-yml/blob/master/CODE_OF_CONDUCT.md).
