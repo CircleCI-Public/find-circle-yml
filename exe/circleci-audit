@@ -8,10 +8,10 @@ require 'uri'
 require 'json'
 require 'pp'
 
-class Bitbucket
-  Repository = Struct.new(:name, :main_branch, :url)
-  Configuration = Struct.new(:url)
+Repository = Struct.new(:name, :main_branch, :url)
+Configuration = Struct.new(:url)
 
+class Bitbucket
   attr_reader :user, :password, :team
 
   def initialize(user, password, team)
@@ -53,25 +53,60 @@ class Bitbucket
   end
 end
 
-bitbucket = Bitbucket.new(ENV.fetch('BITBUCKET_USER'), ENV.fetch('BITBUCKET_APP_PASSWORD'), ENV.fetch('BITBUCKET_TEAM'))
+class GitHub
+  attr_reader :user, :access_token, :organization
+
+  def initialize(user, access_token, organization)
+    @user = user
+    @access_token = access_token
+    @organization = organization
+  end
+
+  def repositories
+    client.organization_repositories(organization).map do |response|
+      Repository.new(
+        response[:full_name],
+        response[:default_branch],
+        response[:html_url]
+      )
+    end
+  end
+
+  def configuration(repository)
+    Configuration.new(
+      client.contents(repository.name, path: 'circle.yml')[:html_url]
+    )
+  rescue Octokit::NotFound
+    nil
+  end
+
+  private
+
+  def client
+    Octokit.auto_paginate = true
+    Octokit::Client.new(login: user, password: access_token)
+  end
+end
+
+bitbucket = Bitbucket.new(
+  ENV.fetch('BITBUCKET_USER'),
+  ENV.fetch('BITBUCKET_APP_PASSWORD'),
+  ENV.fetch('BITBUCKET_TEAM')
+)
 bitbucket.repositories.each do |repository|
   if (configuration = bitbucket.configuration(repository))
     puts configuration.url
   end
 end
 
-Octokit.auto_paginate = true
-
-github_client = Octokit::Client.new(
-  login: ENV.fetch('GITHUB_USER'),
-  password: ENV.fetch('GITHUB_ACCESS_TOKEN')
+github = GitHub.new(
+  ENV.fetch('GITHUB_USER'),
+  ENV.fetch('GITHUB_ACCESS_TOKEN'),
+  ENV.fetch('GITHUB_ORGANIZATION')
 )
-
-repos = github_client.organization_repositories(ENV.fetch('GITHUB_ORGANIZATION'))
-repos.each do |repository|
-  begin
-    puts repository.rels[:contents].get(uri: { path: 'circle.yml' }).data.html_url
-  rescue Octokit::NotFound
-    next
+github.repositories.each do |repository|
+  if (configuration = github.configuration(repository))
+    puts configuration.url
   end
 end
+
