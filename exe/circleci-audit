@@ -9,7 +9,7 @@ require 'json'
 require 'pp'
 
 Repository = Struct.new(:name, :main_branch, :url)
-Configuration = Struct.new(:url)
+ConfigurationFile = Struct.new(:url)
 
 class Bitbucket
   attr_reader :user, :password, :team
@@ -32,13 +32,13 @@ class Bitbucket
     end
   end
 
-  def configuration(repository)
+  def configuration_file(repository)
     response = request("/repositories/#{repository.name}/src/#{repository.main_branch}/circle.yml?format=meta")
     return unless response.code == '200'
     parsed_response = JSON.parse(response.body)
     commit = parsed_response.fetch('commit', {}).fetch('hash', repository.main_branch)
     path = parsed_response.fetch('path')
-    Configuration.new("#{repository.url}/src/#{commit}/#{path}")
+    ConfigurationFile.new("#{repository.url}/src/#{commit}/#{path}")
   end
 
   private
@@ -72,8 +72,8 @@ class GitHub
     end
   end
 
-  def configuration(repository)
-    Configuration.new(
+  def configuration_file(repository)
+    ConfigurationFile.new(
       client.contents(repository.name, path: 'circle.yml')[:html_url]
     )
   rescue Octokit::NotFound
@@ -88,25 +88,114 @@ class GitHub
   end
 end
 
-bitbucket = Bitbucket.new(
-  ENV.fetch('BITBUCKET_USER'),
-  ENV.fetch('BITBUCKET_APP_PASSWORD'),
-  ENV.fetch('BITBUCKET_TEAM')
-)
-bitbucket.repositories.each do |repository|
-  if (configuration = bitbucket.configuration(repository))
-    puts configuration.url
+class GitHubConfiguration
+  ENVIRONMENT_VARIABLES = %w[
+    GITHUB_USER
+    GITHUB_ACCESS_TOKEN
+    GITHUB_ORGANIZATION
+  ]
+
+  attr_reader :environment
+
+  def initialize(environment)
+    @environment = environment
+  end
+
+  def provided?
+    ENVIRONMENT_VARIABLES.any? do |environment_variable|
+      environment.has_key?(environment_variable)
+    end
+  end
+
+  def valid?
+    missing.empty?
+  end
+
+  def error_message
+    "Set environment variables: #{missing.join(', ')}"
+  end
+
+  def service
+    GitHub.new(
+      environment.fetch('GITHUB_USER'),
+      environment.fetch('GITHUB_ACCESS_TOKEN'),
+      environment.fetch('GITHUB_ORGANIZATION')
+    )
+  end
+
+  private
+
+  def missing
+    ENVIRONMENT_VARIABLES.reject do |environment_variable|
+      environment.has_key?(environment_variable)
+    end
   end
 end
 
-github = GitHub.new(
-  ENV.fetch('GITHUB_USER'),
-  ENV.fetch('GITHUB_ACCESS_TOKEN'),
-  ENV.fetch('GITHUB_ORGANIZATION')
-)
-github.repositories.each do |repository|
-  if (configuration = github.configuration(repository))
-    puts configuration.url
+class BitbucketConfiguration
+  ENVIRONMENT_VARIABLES = %w[
+    BITBUCKET_USER
+    BITBUCKET_APP_PASSWORD
+    BITBUCKET_TEAM
+  ]
+
+  attr_reader :environment
+
+  def initialize(environment)
+    @environment = environment
+  end
+
+  def provided?
+    ENVIRONMENT_VARIABLES.any? do |environment_variable|
+      environment.has_key?(environment_variable)
+    end
+  end
+
+  def valid?
+    missing.empty?
+  end
+
+  def error_message
+    "Set environment variables: #{missing.join(', ')}"
+  end
+
+  def service
+    Bitbucket.new(
+      environment.fetch('BITBUCKET_USER'),
+      environment.fetch('BITBUCKET_APP_PASSWORD'),
+      environment.fetch('BITBUCKET_TEAM')
+    )
+  end
+
+  private
+
+  def missing
+    ENVIRONMENT_VARIABLES.reject do |environment_variable|
+      environment.has_key?(environment_variable)
+    end
   end
 end
 
+provided_configurations = [
+  GitHubConfiguration.new(ENV),
+  BitbucketConfiguration.new(ENV)
+].select(&:provided?)
+
+if provided_configurations.empty?
+  STDERR.puts "Provide a Bitbucket or GitHub configuration"
+  exit 1
+end
+
+provided_configurations.each do |configuration|
+  if configuration.valid?
+    service = configuration.service
+    service.repositories.each do |repository|
+      if (configuration_file = service.configuration_file(repository))
+        puts configuration_file.url
+      end
+    end
+  else
+    STDERR.puts configuration.error_message
+    exit 1
+  end
+end
