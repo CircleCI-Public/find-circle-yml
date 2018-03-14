@@ -10,8 +10,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '12.3.0'
   spec.add_dependency 'octokit'
   spec.authors = %(nwjsmith)
+  spec.bindir = 'exe'
   spec.description = ''
   spec.email = ['sayhi@circleci.com']
+  spec.executables = ['circleci-audit']
   spec.files = Dir.glob('lib/**/*.rb') + %w[README.md]
   spec.homepage = 'https://github.com/nwjsmith/thumbtack'
   spec.license = 'MIT'
