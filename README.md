@@ -1,6 +1,6 @@
 # circleci-audit
 
-A command-line tool for finding which repositories in your GitHub organization or Bitbucket team have outdated `circle.yml` configuration files.
+A command-line tool for finding which repositories in your GitHub organization or Bitbucket team have `circle.yml` configuration files.
 
 ## Installation
 
@@ -11,16 +11,16 @@ A command-line tool for finding which repositories in your GitHub organization o
 **GitHub**
 
     $ GITHUB_ORGANIZATION=<your github org> GITHUB_USER=<your github user> GITHUB_ACCESS_TOKEN=<your personal access token> circleci-audit
-    https://github.com/your-org/your-repo/blob/master/circle.yml 2015-04-05T14:30Z
-    https://github.com/your-org/another-repo/blob/master/circle.yml 2017-11-25T08:00Z
+    https://github.com/your-org/your-repo/blob/master/circle.yml
+    https://github.com/your-org/another-repo/blob/master/circle.yml
 
 **Bitbucket**
 
     $ BITBUCKET_TEAM=<your bitbucket team> BITBUCKET_USER=<your bitbucket user> BITBUCKET_APP_PASSWORD=<your bitbucket password> circleci-audit
-    https://bitbucket.org/your-team/your-repo/src/bb030e9dcee6218d0ce521b7312e60e5cc5db4a3/circle.yml 2015-04-05T14:30Z
-    https://bitbucket.org/your-team/another-repo/src/cf9f1078be258dd902ff49718e5ee5422e2dd08f/circle.yml 2017-11-25T08:00Z
+    https://bitbucket.org/your-team/your-repo/src/bb030e9dcee6218d0ce521b7312e60e5cc5db4a3/circle.yml
+    https://bitbucket.org/your-team/another-repo/src/cf9f1078be258dd902ff49718e5ee5422e2dd08f/circle.yml
 
-Writes a list of repositories that contain an outdated `circle.yml` to standard out. Each line contains the repository name along with an [ISO 8601-formatted UTC timestamp](https://tools.ietf.org/html/rfc3339#section-5.8) of the last time the file was modified. When `-github-organization` or `-bitbucket-team` aren't set, `configaudit` will print a list from the repositories under `-github-user` or `-bitbucket-user`, respectively.
+Writes a list of repositories that contain a `circle.yml` to standard out.
 
 ## Authorization
 
