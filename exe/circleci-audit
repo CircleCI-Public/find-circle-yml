@@ -21,14 +21,21 @@ class Bitbucket
   end
 
   def repositories
-    response = request("/repositories/#{team}")
-    parsed_response = JSON.parse(response.body)
-    parsed_response.fetch('values', []).map do |value|
-      Repository.new(
-        value.fetch('full_name'),
-        value.dig('mainbranch', 'branch') || 'master',
-        value.fetch('links').fetch('html').fetch('href')
-      )
+    Enumerator.new do |y|
+      url = "/repositories/#{team}"
+      loop do
+        response = request(url)
+        parsed_response = JSON.parse(response.body)
+        parsed_response.fetch('values', []).each do |value|
+          y << Repository.new(
+            value.fetch('full_name'),
+            value.dig('mainbranch', 'branch') || 'master',
+            value.fetch('links').fetch('html').fetch('href')
+          )
+        end
+        break unless parsed_response.has_key?('next')
+        url = parsed_response.fetch('next')
+      end
     end
   end
 
@@ -177,8 +184,8 @@ class BitbucketConfiguration
 end
 
 provided_configurations = [
-  GitHubConfiguration.new(ENV),
-  BitbucketConfiguration.new(ENV)
+  BitbucketConfiguration.new(ENV),
+  GitHubConfiguration.new(ENV)
 ].select(&:provided?)
 
 if provided_configurations.empty?
